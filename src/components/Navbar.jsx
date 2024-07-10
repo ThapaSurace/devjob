@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 const Navbar = () => {
     const user = false
@@ -10,8 +11,14 @@ const Navbar = () => {
 
           {/* middle */}
           <ul className='flex gap-4 font-semibold text-lg'>
-            <li>Home</li>
-            <li>Jobs</li>
+            <Link to='/'>
+               <li>Home</li>
+            </Link>
+            <Link to='/jobs'>
+               <li>Jobs</li>
+            </Link>
+
+
             <li>Add Jobs</li>
           </ul>
 
@@ -20,8 +27,14 @@ const Navbar = () => {
             {
                 user ? <button>Logout</button> : (
                     <>
+                     <Link to='/register'>
                      <button>Regsiter</button>
-                     <button>Login</button>
+                     </Link>
+
+                    <Link to='/login'>
+                    <button>Login</button>
+                    </Link>
+                    
                     </>
                 )
             }
