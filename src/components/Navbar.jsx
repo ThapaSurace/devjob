@@ -19,7 +19,10 @@ const Navbar = () => {
             </Link>
 
 
+            <Link to='/addjob'>
             <li>Add Jobs</li>
+            </Link>
+            
           </ul>
 
           {/* right */}
