@@ -7,10 +7,13 @@ import Register from './pages/Register'
 import Login from './pages/Login'
 import SingleJobPage from './pages/SingleJobPage'
 import AddJob from './pages/AddJob'
+import { Toaster } from 'react-hot-toast'
+import EditJob from './pages/EditJob'
 
 const App = () => {
   return (
    <>
+   <Toaster />
     <Navbar />
     <Routes>
       <Route path='/' element={<Home />} />
@@ -19,6 +22,7 @@ const App = () => {
       <Route path='/login' element={<Login />} />
       <Route path='/job/:id' element={<SingleJobPage />} />
       <Route path='/addjob' element={<AddJob />} />
+      <Route path='/editJob' element={<EditJob />} />
     </Routes>
    </>
   )

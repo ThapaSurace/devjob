@@ -1,36 +1,45 @@
-import axios from 'axios'
 import React from 'react'
-import { useForm } from 'react-hook-form'
-import toast from 'react-hot-toast'
+import { useLocation, useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
+import axios from 'axios';
+import { useForm } from 'react-hook-form';
 
-const AddJob = () => {
-  const {register,handleSubmit,reset, formState:{errors,isSubmitting}} = useForm()
+const EditJob = () => {
+  const location = useLocation()
+  const job = location.state?.job
 
-  const onSubmit = async (values) => {
+  const navigate = useNavigate()
+
+  const { register, handleSubmit, formState: { errors, isSubmitting }} = useForm()
+
+  const onSubmit = async values => {
     const formData = {
-      type: values.type,
-      title: values.title,
-      location: values.location,
-      description: values.description,
-      salary: values.salary,
-      company: {
-        name: values.companyName,
-        description: values.companyDesc,
-        contactEmail: values.companyEmail,
-        contactPhone: values.companyPhone
+        type: values.type,
+        title: values.title,
+        location: values.location,
+        description: values.description,
+        salary: values.salary,
+        company: {
+          name: values.companyName,
+          description: values.companyDesc,
+          contactEmail: values.companyEmail,
+          contactPhone: values.companyPhone
+        }
       }
+    try {
+      await axios.put(`http://localhost:4000/jobs/${job?.id}`,formData)
+      toast.success("Job updated successfully!")
+      navigate('/jobs')
+    } catch (error) {
+      console.log(error);
     }
-   try {
-    await axios.post("http://localhost:4000/jobs",formData)
-    toast.success("Job added sucessfully!")
-    reset()
-   } catch (error) {
-    console.log(error);
-   }
   }
+
+   console.log(job);
+ 
   return (
     <div className='bg-white px-6 py-8 mb-4 shadow-md rounded-md border max-w-2xl mx-auto my-10'>
-      <h2 className="text-3xl text-center font-semibold mb-6">Add Job</h2>
+      <h2 className="text-3xl text-center font-semibold mb-6">Edit Job</h2>
 
       <form onSubmit={handleSubmit(onSubmit)} className='space-y-3'>
         <div className='space-y-1'>
@@ -39,6 +48,7 @@ const AddJob = () => {
             id="type"
             name="type"
             {...register('type')}
+            defaultValue={job?.type || 'Full-Time'}
           >
             <option value="Full-Time">Full-Time</option>
             <option value="Part-Time">Part-Time</option>
@@ -51,11 +61,11 @@ const AddJob = () => {
           <input
             type="text"
             id="title"
-            name="title"
             placeholder="Add job title"
             {...register('title', {
               required: "Tile is required*"
             })}
+            defaultValue={job?.title || ''}
           />
           {errors.title && <p className='italic text-sm text-red-500 tracking-wide'>{errors.title.message}</p>}
         </div>
@@ -67,12 +77,12 @@ const AddJob = () => {
           </label>
           <textarea
             id='description'
-            name='description'
             rows='4'
             placeholder='Add any job duties, expectations, requirements, etc'
             {...register('description', {
               required: "Description is required*"
             })}
+            defaultValue={job?.description || ''}
           ></textarea>
           {errors.description && <p className='italic text-sm text-red-500 tracking-wide'>{errors.description.message}</p>}
         </div>
@@ -84,8 +94,8 @@ const AddJob = () => {
           </label>
           <select
             id='salary'
-            name='salary'
             {...register('salary')}
+            defaultValue={job?.salary || 'Under $50k'}
           >
             <option value='Under $50K'>Under $50K</option>
             <option value='$50K - 60K'>$50K - $60K</option>
@@ -108,11 +118,11 @@ const AddJob = () => {
           <input
             type='text'
             id='location'
-            name='location'
             placeholder='Company Location'
             {...register('location', {
               required: "Location is required*"
             })}
+            defaultValue={job?.location || ''}
           />
           {errors.location && <p className='italic text-sm text-red-500 tracking-wide'>{errors.location.message}</p>}
         </div>
@@ -125,11 +135,11 @@ const AddJob = () => {
           <input
             type='text'
             id='company'
-            name='company'
             placeholder='Company Name'
             {...register('companyName', {
               required: "Company name is required*"
             })}
+            defaultValue={job?.company.name || ''}
           />
           {errors.companyName && <p className='italic text-sm text-red-500 tracking-wide'>{errors.companyName.message}</p>}
         </div>
@@ -140,12 +150,12 @@ const AddJob = () => {
           </label>
           <textarea
             id='company_description'
-            name='company_description'
             rows='4'
             placeholder='What does your company do?'
             {...register('companyDesc', {
               required: "Company description is required*"
             })}
+            defaultValue={job?.company.description || ''}
           ></textarea>
           {errors.companyDesc && <p className='italic text-sm text-red-500 tracking-wide'>{errors.companyDesc.message}</p>}
         </div>
@@ -162,6 +172,7 @@ const AddJob = () => {
             {...register('companyEmail', {
               required: "Company Email is required*"
             })}
+            defaultValue={job?.company.contactEmail || ''}
           />
           {errors.companyEmail && <p className='italic text-sm text-red-500 tracking-wide'>{errors.companyEmail.message}</p>}
         </div>
@@ -172,13 +183,13 @@ const AddJob = () => {
           <input
             type='tel'
             id='contact_phone'
-            name='contact_phone'
             placeholder='Optional phone for applicants'
             {...register('companyPhone', {
               required: "Company Contact is required*"
             })}
+            defaultValue={job?.company.contactPhone || ''}
           />
-          {errors.companyContact && <p className='italic text-sm text-red-500 tracking-wide'>{errors.companyContact.message}</p>}
+          {errors.companyPhone && <p className='italic text-sm text-red-500 tracking-wide'>{errors.companyContact.message}</p>}
         </div>
         <div>
           <button
@@ -186,7 +197,7 @@ const AddJob = () => {
             className='bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-full w-full focus:outline-none focus:shadow-outline'
             type='submit'
           >
-            {isSubmitting ? "processing..." : "Add Job"}
+            {isSubmitting ? "processing..." : "Update"}
           </button>
         </div>
       </form>
@@ -194,4 +205,4 @@ const AddJob = () => {
   )
 }
 
-export default AddJob
+export default EditJob

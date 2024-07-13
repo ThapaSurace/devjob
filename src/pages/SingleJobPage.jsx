@@ -1,6 +1,7 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import toast from 'react-hot-toast/headless'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 
 const SingleJobPage = () => {
   const [job,setJob] = useState('')
@@ -24,6 +25,18 @@ const SingleJobPage = () => {
   useEffect(()=>{
     getJob()
   },[])
+ 
+const navigate = useNavigate()
+
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`http://localhost:4000/jobs/${id}`)
+      toast.success("Job deleted sucessfuly!")
+      navigate('/jobs')
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   if(isLoading) return <span>loading...</span>
   if(error) return <span>Error fetching data!</span>
@@ -60,11 +73,13 @@ const SingleJobPage = () => {
                     <div className="bg-white p-6 rounded-lg shadow-md mt-6">
                         <h3 className="text-xl font-bold mb-6">Manage Job</h3>
                         
+                        <Link to='/editjob' state={{job}}>
                         <button className="p-2 rounded-md text-white bg-indigo-500 mb-4 mr-4">
                             Edit Job
                         </button>
+                        </Link>
                         
-                        <button className="p-2 rounded-md text-white bg-red-500">
+                        <button onClick={()=>handleDelete(job?.id)} className="p-2 rounded-md text-white bg-red-500">
                             Delete Job
                         </button>
                     </div>
